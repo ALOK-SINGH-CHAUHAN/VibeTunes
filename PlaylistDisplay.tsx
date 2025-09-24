@@ -1,53 +1,61 @@
-import PlaylistDisplay from '../PlaylistDisplay'
 import { Playlist } from '@shared/schema'
+import { Button } from './button'
+import { Card, CardContent, CardHeader, CardTitle } from './card'
+import TrackCard from './TrackCard'
+import { Share2 } from 'lucide-react'
 
-export default function PlaylistDisplayExample() {
-  const samplePlaylist: Playlist = {
-    id: "playlist-1",
-    name: "Upbeat Morning Vibes",
-    description: "Energetic tracks to kickstart your productive day with positive energy and motivation",
-    moodPrompt: "upbeat morning vibes for a productive day",
-    createdAt: "2024-01-15T09:00:00Z",
-    tracks: [
-      {
-        id: "track-1",
-        name: "Good 4 U",
-        artist: "Olivia Rodrigo",
-        album: "SOUR",
-        albumArt: "https://i.scdn.co/image/ab67616d0000b273a91c10fe9472d9bd89802e5a",
-        duration: 178986,
-        spotifyUrl: "https://open.spotify.com/track/example1"
-      },
-      {
-        id: "track-2", 
-        name: "Levitating",
-        artist: "Dua Lipa",
-        album: "Future Nostalgia",
-        albumArt: "https://i.scdn.co/image/ab67616d0000b273ef6a9adba9e94940c2a3c8dc",
-        duration: 203064,
-        spotifyUrl: "https://open.spotify.com/track/example2"
-      },
-      {
-        id: "track-3",
-        name: "Sunflower",
-        artist: "Post Malone, Swae Lee",
-        album: "Spider-Man: Into the Spider-Verse",
-        albumArt: "https://i.scdn.co/image/ab67616d0000b2736d4f6c9c99291e3e72420251",
-        duration: 158040,
-        spotifyUrl: "https://open.spotify.com/track/example3"
-      }
-    ]
-  }
+interface PlaylistDisplayProps {
+  playlist: Playlist
+  currentTrackId?: string
+  isPlaying: boolean
+  onPlayPause: (trackId: string) => void
+  onSharePlaylist: () => void
+}
 
+export default function PlaylistDisplay({ 
+  playlist, 
+  currentTrackId, 
+  isPlaying, 
+  onPlayPause, 
+  onSharePlaylist 
+}: PlaylistDisplayProps) {
   return (
-    <div className="p-8 bg-background min-h-screen">
-      <PlaylistDisplay
-        playlist={samplePlaylist}
-        currentTrackId="track-1"
-        isPlaying={true}
-        onPlayPause={(trackId) => console.log('Play/pause track:', trackId)}
-        onSharePlaylist={() => console.log('Share playlist clicked')}
-      />
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle className="text-2xl">{playlist.name}</CardTitle>
+              <p className="text-muted-foreground mt-2">{playlist.description}</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Based on: "{playlist.moodPrompt}"
+              </p>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={onSharePlaylist}
+              className="flex items-center gap-2"
+            >
+              <Share2 className="h-4 w-4" />
+              Share
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {playlist.tracks.map((track) => (
+              <TrackCard
+                key={track.id}
+                track={track}
+                isCurrentTrack={currentTrackId === track.id}
+                isPlaying={isPlaying && currentTrackId === track.id}
+                onPlayPause={() => onPlayPause(track.id)}
+              />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

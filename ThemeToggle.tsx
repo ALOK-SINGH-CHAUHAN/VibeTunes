@@ -1,17 +1,35 @@
-import ThemeToggle from '../ThemeToggle'
+import { useTheme } from 'next-themes'
+import { Button } from './button'
+import { Moon, Sun } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-export default function ThemeToggleExample() {
+export default function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <Button variant="outline" size="icon">
+        <div className="h-4 w-4" />
+      </Button>
+    )
+  }
+
   return (
-    <div className="p-8 bg-background min-h-screen">
-      <div className="flex justify-end">
-        <ThemeToggle />
-      </div>
-      <div className="mt-8 text-center">
-        <h2 className="text-2xl font-bold mb-4">Theme Toggle Test</h2>
-        <p className="text-muted-foreground">
-          Click the button above to toggle between light and dark themes
-        </p>
-      </div>
-    </div>
+    <Button
+      variant="outline"
+      size="icon"
+      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+    >
+      {theme === 'dark' ? (
+        <Sun className="h-4 w-4" />
+      ) : (
+        <Moon className="h-4 w-4" />
+      )}
+    </Button>
   )
 }

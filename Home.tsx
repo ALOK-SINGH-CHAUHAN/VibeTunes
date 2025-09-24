@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import MoodInput from "@/components/MoodInput";
-import LoadingState from "@/components/LoadingState";
-import PlaylistDisplay from "@/components/PlaylistDisplay";
-import ThemeToggle from "@/components/ThemeToggle";
+import MoodInput from "@/components/ui/MoodInput";
+import LoadingState from "@/components/ui/LoadingState";
+import PlaylistDisplay from "@/components/ui/PlaylistDisplay";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 import { apiRequest } from "@/lib/queryClient";
 import { Playlist } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
@@ -29,12 +29,9 @@ export default function Home() {
       setLoadingStage('generating');
       await new Promise<void>((resolve) => setTimeout(resolve, 1500));
 
-      const response = await apiRequest({
-        url: '/api/generate-playlist',
-        method: 'POST',
-        body: { mood }
-      });
-      return response as unknown as Playlist;
+      const response = await apiRequest('POST', '/api/generate-playlist', { mood });
+      const playlist = await response.json();
+      return playlist as Playlist;
     },
     onSuccess: (data: Playlist) => {
       setPlaylist(data);
